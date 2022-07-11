@@ -1,0 +1,3 @@
+input, button {
+    @apply focus:border-0 focus:border-transparent focus:outline-none;
+}
