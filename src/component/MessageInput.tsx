@@ -46,8 +46,6 @@ export default function MessageInput() {
                         }}
                         onKeyDown={(keyPressEvent) => {
                             if (keyPressEvent.code.toLowerCase() === 'enter') {
-                                console.log('working');
-                                
                                 let _newMessageRecordList = messageRecordRef;
                                 _newMessageRecordList.push(currentMessageInput);
                                 setCurrentMessageInput(null);
