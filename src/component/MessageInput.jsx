@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { FaPaperclip, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import { getReactionData } from "./assets";
 
@@ -10,9 +11,10 @@ export default function MessageInput() {
                 hours: 13,
                 mins: 46,
                 mrdn: 'pm'
-            } 
+            }
         }
-    ]
+    ];
+
     return (
         <React.Fragment>
             <div className="message-input-component-container">
@@ -23,8 +25,8 @@ export default function MessageInput() {
                         return (
                             <Message 
                                 key={messageIndex}
-                                messageText={message.content}
-                                messageTime={message.time}
+                                messageText={message?.content}
+                                messageTime={message?.time}
                             />
                         )
                     })}
@@ -56,47 +58,88 @@ export default function MessageInput() {
 function Message({ messageText, messageTime }) {
     const [reactionActionVisibilty, setReactionActionVisibility] = useState('0%');
     const [reactionListVisibility, setReactionListVisibility] = useState('none');
+
+    const [reactionRecord, setReactionRecord] = useState([]);
+
     const reactionsList = getReactionData();
+
+    useEffect(() => {
+        let reactionListButton = document.getElementById('reaction-list-button');
+        // reactionListButton.addEventListener('focusin', () => setReactionListVisibility('flex'));
+        // reactionListButton.addEventListener('focusout', () => setReactionListVisibility('none'));
+    });
+
+    useEffect(() => {
+        window.onkeyup = function (keyboardEvent) {
+            if (keyboardEvent.keyCode === 27) {
+                setReactionListVisibility('none');
+            }
+        }
+    });
+
     return (
         <React.Fragment>
-            <span className="message-component-wrapper w-fit h-fit">
-                <div className="message-reactions-list-option-wrapper w-fit h-fit flex flex-row items-center justify-center gap-1 bg-zinc-900 rounded-full px-3 py-1 shadow-lg"
+            <div className="message-component-wrapper h-fit flex flex-col items-end justify-end]">
+                <div className="message-reactions-list-option-wrapper w-[280px] h-fit flex flex-row items-center justify-center gap-1 bg-zinc-900 rounded-full px-3 py-1 shadow-lg transition-all"
                     style={{
-                        display: reactionListVisibility,
-                        
+                        display: reactionListVisibility
                     }}
                 >
                     {reactionsList?.map((reaction, reactionIndex) => {
                         return (
-                            <span className="p-2 rounded-full bg-transparent hover:bg-white hover:bg-opacity-20"
+                            <button className="p-2 rounded-full bg-transparent hover:bg-white hover:bg-opacity-20"
                                 key={reactionIndex}
+                                onClick={() => {
+                                    let _newReactionRecord = reactionRecord;
+                                    _newReactionRecord.push({
+                                        emoji: getReactionData(reaction?.name),
+                                        username: 'You'
+                                    });
+                                    setReactionRecord(_newReactionRecord);
+                                    console.log('added', reactionRecord);
+                                }}
                             >
                                 <img 
-                                    src={reaction.content} 
+                                    src={reaction?.content} 
                                     alt='emoji-reaction' 
                                 />
-                            </span>
+                            </button>
                         )
                     })}
                 </div>
-                <span className="message-block-reaction_action-wrapper flex flex-row items-center justify-end gap-2"
+                <div className="message-block-reaction_action-wrapper flex flex-row items-center justify-end gap-2"
                     onMouseEnter={() => setReactionActionVisibility('60%')}
                     onMouseLeave={() => setReactionActionVisibility('0%')}
                     onClick={() => setReactionListVisibility('flex')}
                 >
-                    <span className="message-reaction-action-icon-wrapper w-fit h-fit flex flex-row items-center cursor-pointer justify-center text-white text-opacity-60 p-[4px] bg-white bg-opacity-40 rounded-full"
+                    <button className="message-reaction-action-icon-wrapper w-fit h-fit flex flex-row items-center cursor-pointer justify-center text-white text-opacity-60 p-[4px] bg-white bg-opacity-40 rounded-full"
+                        id="reaction-list-button"
                         style={{
                             opacity: reactionActionVisibilty
                         }}
                     >
                         <FaSmile />
-                    </span>
-                    <span className="message-block-wrapper flex flex-row items-end gap-3 my-3 rounded-md justify-start w-fit px-3 py-1 bg-teal-700">
+                    </button>
+                    <div className="message-block-wrapper flex flex-row items-end gap-3 my-3 rounded-md justify-start w-fit px-3 py-1 bg-teal-700">
                         <span className="message-text-wrapper font-semibold text-sm text-white">{messageText}</span>
-                        <span className="message-time-wrapper font-normal text-xs text-white text-opacity-60">{messageTime?.hours}:{messageTime?.mins}{" "}{messageTime?.mrdn}</span>
-                    </span>
-                </span>
-            </span>
+                        <span className="message-time-wrapper font-normal text-xs text-white text-opacity-60">
+                            {messageTime?.hours}:{messageTime?.mins}{" "}{messageTime?.mrdn}
+                        </span>
+                    </div>
+                </div>
+                <div className="reaction-record-list-action-button-wrapper">
+                    <div className="reaction-record-list-overlay-wrapper"></div>
+                    <button className="reaction-record-list-action-button px-[4px] py-[2px] bg-teal-600 rounded-full flex flex-row items-center justify-center gap-[1.5px]">
+                        {reactionRecord?.map((reactionEmoji, reactionEmojiIndex) => {
+                            return (
+                                <img src={reactionEmoji?.emoji} alt="emoji-record" key={reactionEmojiIndex} 
+                                    style={{ width: '14px', height: '14px' }}
+                                />
+                            )
+                        })}
+                    </button>
+                </div>
+            </div>
         </React.Fragment>
     )
 }

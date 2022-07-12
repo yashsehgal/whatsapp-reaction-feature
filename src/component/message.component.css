@@ -8,8 +8,9 @@ input, button {
 }
 
 .message-reactions-list-option-wrapper {
-    margin-bottom: 2rem;
     cursor: default;
     z-index: 2;
     position: absolute;
+    bottom: 48px;
+    right: 0px;
 }

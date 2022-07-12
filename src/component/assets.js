@@ -5,16 +5,29 @@ import EmotionalEmojiSVG from './data/emotional.svg';
 import TearsEmojiSVG from './data/tears.svg';
 import ShockedEmojiSVG from './data/shocked.svg';
 
-function getReactionData() {
-    const reactionData = [
-        { content: ThumbsUpEmojiSVG },
-        { content: HeartEmojiSVG },
-        { content: LaughEmojiSVG },
-        { content: TearsEmojiSVG },
-        { content: ShockedEmojiSVG },
-        { content: EmotionalEmojiSVG }
-    ];
-    return reactionData;
+function getReactionData(name=null) {
+    if (!name) {
+        const reactionData = [
+            { content: ThumbsUpEmojiSVG, name: 'thumbs-up' },
+            { content: HeartEmojiSVG, name: 'heart' },
+            { content: LaughEmojiSVG, name: 'laugh' },
+            { content: TearsEmojiSVG, name: 'tears' },
+            { content: ShockedEmojiSVG, name: 'shocked' },
+            { content: EmotionalEmojiSVG, name: 'emotional' }
+        ];
+        return reactionData;
+    } else {
+        switch(name) {
+            case 'thumbs-up': return ThumbsUpEmojiSVG;
+            case 'heart': return HeartEmojiSVG;
+            case 'laugh': return LaughEmojiSVG;
+            case 'tears': return TearsEmojiSVG;
+            case 'shocked': return ShockedEmojiSVG;
+            case 'emotional': return EmotionalEmojiSVG;
+
+            default: console.warn('emoji not found'); break;
+        }
+    }
 }
 
 export {
