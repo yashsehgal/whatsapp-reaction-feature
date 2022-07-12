@@ -1,39 +1,22 @@
-import { ReactComponent as ThumbsUpEmojiSVG } from './data/thumbs-up.svg'; 
-import { ReactComponent as HeartEmojiSVG } from './data/heart.svg';
-import { ReactComponent as LaughEmojiSVG } from './data/laugh.svg';
-import { ReactComponent as EmotionalEmojiSVG } from './data/emotional.svg';
-import { ReactComponent as TearsEmojiSVG } from './data/tears.svg';
-import { ReactComponent as ShockedEmojiSVG } from './data/shocked.svg';
+import ThumbsUpEmojiSVG from './data/thumbs-up.svg'; 
+import HeartEmojiSVG from './data/heart.svg';
+import LaughEmojiSVG from './data/laugh.svg';
+import EmotionalEmojiSVG from './data/emotional.svg';
+import TearsEmojiSVG from './data/tears.svg';
+import ShockedEmojiSVG from './data/shocked.svg';
 
-function ThumbsUpEmoji() {
-    return <ThumbsUpEmojiSVG />
-}
-
-function HeartEmoji() {
-    return <HeartEmojiSVG />
-}
-
-function LaughEmoji() {
-    return <LaughEmojiSVG />
-}
-
-function EmotionalEmoji() {
-    return <EmotionalEmojiSVG />
-}
-
-function TearsEmoji() {
-    return <TearsEmojiSVG />
-}
-
-function ShockedEmoji() {
-    return <ShockedEmojiSVG />
+function getReactionData() {
+    const reactionData = [
+        { content: ThumbsUpEmojiSVG },
+        { content: HeartEmojiSVG },
+        { content: LaughEmojiSVG },
+        { content: TearsEmojiSVG },
+        { content: ShockedEmojiSVG },
+        { content: EmotionalEmojiSVG }
+    ];
+    return reactionData;
 }
 
 export {
-    ThumbsUpEmoji,
-    HeartEmoji,
-    LaughEmoji,
-    ShockedEmoji,
-    TearsEmoji,
-    EmotionalEmoji
+    getReactionData
 }

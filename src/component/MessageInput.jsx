@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaPaperclip, FaPaperPlane, FaSmile } from 'react-icons/fa';
+import { getReactionData } from "./assets";
 
 export default function MessageInput() {
     const messageRecord = [
@@ -54,12 +55,34 @@ export default function MessageInput() {
 
 function Message({ messageText, messageTime }) {
     const [reactionActionVisibilty, setReactionActionVisibility] = useState('0%');
+    const [reactionListVisibility, setReactionListVisibility] = useState('none');
+    const reactionsList = getReactionData();
     return (
         <React.Fragment>
-            <span className="message-component-wrapper">
+            <span className="message-component-wrapper w-fit h-fit">
+                <div className="message-reactions-list-option-wrapper w-fit h-fit flex flex-row items-center justify-center gap-1 bg-zinc-900 rounded-full px-3 py-1 shadow-lg"
+                    style={{
+                        display: reactionListVisibility,
+                        
+                    }}
+                >
+                    {reactionsList?.map((reaction, reactionIndex) => {
+                        return (
+                            <span className="p-2 rounded-full bg-transparent hover:bg-white hover:bg-opacity-20"
+                                key={reactionIndex}
+                            >
+                                <img 
+                                    src={reaction.content} 
+                                    alt='emoji-reaction' 
+                                />
+                            </span>
+                        )
+                    })}
+                </div>
                 <span className="message-block-reaction_action-wrapper flex flex-row items-center justify-end gap-2"
                     onMouseEnter={() => setReactionActionVisibility('60%')}
                     onMouseLeave={() => setReactionActionVisibility('0%')}
+                    onClick={() => setReactionListVisibility('flex')}
                 >
                     <span className="message-reaction-action-icon-wrapper w-fit h-fit flex flex-row items-center cursor-pointer justify-center text-white text-opacity-60 p-[4px] bg-white bg-opacity-40 rounded-full"
                         style={{
