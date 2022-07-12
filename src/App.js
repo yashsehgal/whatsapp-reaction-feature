@@ -1,5 +1,6 @@
-import MessageInput from "./component/MessageInput.tsx";
+
 import './component/message.component.css';
+import MessageInput from './component/MessageInput';
 
 export default function App() {
   return (
