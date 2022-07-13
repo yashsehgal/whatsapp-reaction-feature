@@ -4,7 +4,7 @@ import { FaPaperclip, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import { getReactionData } from "./assets";
 
 export default function MessageInput() {
-    const messageRecord = [
+    const [messageRecord, setMessageRecord] = useState([
         { 
             content: 'Hey People', 
             time: {
@@ -13,13 +13,14 @@ export default function MessageInput() {
                 mrdn: 'pm'
             }
         }
-    ];
+    ]);
+
+    const [switchRef, setSwitch] = useState(false);
 
     return (
         <React.Fragment>
             <div className="message-input-component-container">
-                <div className="message-record-wrapper flex flex-col items-end justify-end gap-2" 
-                    aria-label="message-record"
+                <div className="message-record-wrapper flex flex-col items-end justify-end" 
                 >
                     {messageRecord?.map((message, messageIndex) => {
                         return (
@@ -27,6 +28,7 @@ export default function MessageInput() {
                                 key={messageIndex}
                                 messageText={message?.content}
                                 messageTime={message?.time}
+                                messageId={`message-block-wpbase_${messageIndex}`}
                             />
                         )
                     })}
@@ -41,10 +43,49 @@ export default function MessageInput() {
                                 className='text-sm font-normal placeholder:font-semibold placeholder:text-zinc-500 text-zinc-300 w-[420px] h-auto bg-transparent'
                                 placeholder='Type a message'
                                 id="message-input"
+                                onKeyDown={(keyboardEvent) => {
+                                    if (keyboardEvent.code.toLowerCase() === 'enter') {
+                                        let keyboardInput = document.getElementById('message-input').value;
+                                        if (keyboardInput !== null && keyboardInput !== undefined && keyboardInput !== "") {
+                                            let _currentMessageRecord = messageRecord;
+                                            let currentDate = new Date();
+                                            _currentMessageRecord.push({
+                                                content: document.getElementById('message-input').value, 
+                                                time: {
+                                                    hours: currentDate.getHours(),
+                                                    mins: currentDate.getMinutes(),
+                                                    mrdn: currentDate.getHours() <= 11 && currentDate.getHours() > 0 ? 'am' : 'pm'
+                                                }
+                                            });
+                                            setMessageRecord(_currentMessageRecord);
+                                            setSwitch(!switchRef);      // will find a solution for it
+                                            document.getElementById('message-input').value = "";
+                                        }
+                                    }
+                                }}
                             />
                         </span>
                         <span className='send-button-wrapper flex flex-row items-center justify-center'>
-                            <button className='p-3 ml-4 rounded-full bg-teal-600 hover:bg-teal-700 text-white flex flex-row items-center justify-center'>
+                            <button className='p-3 ml-4 rounded-full bg-teal-600 hover:bg-teal-700 text-white flex flex-row items-center justify-center'
+                                onClick={() => {
+                                    let keyboardInput = document.getElementById('message-input').value;
+                                    if (keyboardInput !== null && keyboardInput !== undefined && keyboardInput !== "") {
+                                        let _currentMessageRecord = messageRecord;
+                                        let currentDate = new Date();
+                                        _currentMessageRecord.push({
+                                            content: document.getElementById('message-input').value, 
+                                            time: {
+                                                hours: currentDate.getHours(),
+                                                mins: currentDate.getMinutes(),
+                                                mrdn: currentDate.getHours() <= 11 && currentDate.getHours() > 0 ? 'am' : 'pm'
+                                            }
+                                        });
+                                        setMessageRecord(_currentMessageRecord);
+                                        setSwitch(!switchRef);
+                                        document.getElementById('message-input').value = "";
+                                    }
+                                }}
+                            >
                                 <FaPaperPlane />
                             </button>
                         </span>
@@ -55,18 +96,27 @@ export default function MessageInput() {
     )
 }
 
-function Message({ messageText, messageTime }) {
+function Message({ messageText, messageTime, messageId }) {
     const [reactionActionVisibilty, setReactionActionVisibility] = useState('0%');
     const [reactionListVisibility, setReactionListVisibility] = useState('none');
 
     const [reactionRecord, setReactionRecord] = useState([]);
+    const [addedReactionsList, setAddedReactionsList] = useState([]);
 
     const reactionsList = getReactionData();
 
     useEffect(() => {
-        let reactionListButton = document.getElementById('reaction-list-button');
-        // reactionListButton.addEventListener('focusin', () => setReactionListVisibility('flex'));
-        // reactionListButton.addEventListener('focusout', () => setReactionListVisibility('none'));
+        let reactionListButton = document.getElementById(messageId);
+        reactionListButton.addEventListener('focusin', () => {
+            setTimeout(() => {
+                setReactionListVisibility('flex');
+            }, 300);
+        });
+        reactionListButton.addEventListener('focusout', () => {
+            setTimeout(() => {
+                setReactionListVisibility('none');
+            }, 300);
+        });
     });
 
     useEffect(() => {
@@ -79,7 +129,7 @@ function Message({ messageText, messageTime }) {
 
     return (
         <React.Fragment>
-            <div className="message-component-wrapper h-fit flex flex-col items-end justify-end]">
+            <div className="message-component-wrapper h-fit flex flex-col items-end justify-end">
                 <div className="message-reactions-list-option-wrapper w-[280px] h-fit flex flex-row items-center justify-center gap-1 bg-zinc-900 rounded-full px-3 py-1 shadow-lg transition-all"
                     style={{
                         display: reactionListVisibility
@@ -90,13 +140,21 @@ function Message({ messageText, messageTime }) {
                             <button className="p-2 rounded-full bg-transparent hover:bg-white hover:bg-opacity-20"
                                 key={reactionIndex}
                                 onClick={() => {
-                                    let _newReactionRecord = reactionRecord;
-                                    _newReactionRecord.push({
-                                        emoji: getReactionData(reaction?.name),
-                                        username: 'You'
+                                    let _addedReactionsList = addedReactionsList;
+                                    reactionRecord?.map((_reaction) => {
+                                        _addedReactionsList.push(_reaction.reactionName);
+                                        setAddedReactionsList(_addedReactionsList);
+                                        return <React.Fragment></React.Fragment>
                                     });
-                                    setReactionRecord(_newReactionRecord);
-                                    console.log('added', reactionRecord);
+                                    if (!addedReactionsList.includes(reaction?.name)) {
+                                        let _newReactionRecord = reactionRecord;
+                                        _newReactionRecord.push({
+                                            emoji: getReactionData(reaction?.name),
+                                            username: 'You',
+                                            reactionName: reaction?.name
+                                        });
+                                        setReactionRecord(_newReactionRecord);
+                                    }
                                 }}
                             >
                                 <img 
@@ -113,7 +171,7 @@ function Message({ messageText, messageTime }) {
                     onClick={() => setReactionListVisibility('flex')}
                 >
                     <button className="message-reaction-action-icon-wrapper w-fit h-fit flex flex-row items-center cursor-pointer justify-center text-white text-opacity-60 p-[4px] bg-white bg-opacity-40 rounded-full"
-                        id="reaction-list-button"
+                        id={messageId}
                         style={{
                             opacity: reactionActionVisibilty
                         }}
@@ -129,15 +187,22 @@ function Message({ messageText, messageTime }) {
                 </div>
                 <div className="reaction-record-list-action-button-wrapper">
                     <div className="reaction-record-list-overlay-wrapper"></div>
-                    <button className="reaction-record-list-action-button px-[4px] py-[2px] bg-teal-600 rounded-full flex flex-row items-center justify-center gap-[1.5px]">
-                        {reactionRecord?.map((reactionEmoji, reactionEmojiIndex) => {
-                            return (
-                                <img src={reactionEmoji?.emoji} alt="emoji-record" key={reactionEmojiIndex} 
-                                    style={{ width: '14px', height: '14px' }}
-                                />
-                            )
-                        })}
-                    </button>
+                    {reactionRecord && reactionRecord.length > 0
+                        ? <button className="reaction-record-list-action-button px-[4px] py-[2px] bg-teal-600 rounded-full flex flex-row items-center justify-center gap-[1.5px] -mt-1 mb-1.5">
+                            {reactionRecord?.map((reactionEmoji, reactionEmojiIndex) => {
+                                return (
+                                    <img src={reactionEmoji?.emoji} alt="emoji-record" key={reactionEmojiIndex} 
+                                        style={{ width: '14px', height: '14px' }}
+                                    />
+                                )
+                            })}
+                            {reactionRecord.length > 1
+                                ? <span className="text-xs text-white text-opacity-50 font-normal">{reactionRecord.length}</span>
+                                : <React.Fragment></React.Fragment>
+                            }
+                        </button>
+                        : <React.Fragment></React.Fragment>
+                    }
                 </div>
             </div>
         </React.Fragment>
