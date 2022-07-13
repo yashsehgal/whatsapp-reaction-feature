@@ -4,16 +4,7 @@ import { FaPaperclip, FaPaperPlane, FaSmile } from 'react-icons/fa';
 import { getReactionData } from "./assets";
 
 export default function MessageInput() {
-    const [messageRecord, setMessageRecord] = useState([
-        { 
-            content: 'Hey People', 
-            time: {
-                hours: 13,
-                mins: 46,
-                mrdn: 'pm'
-            }
-        }
-    ]);
+    const [messageRecord, setMessageRecord] = useState([]);
 
     const [switchRef, setSwitch] = useState(false);
 
@@ -117,6 +108,11 @@ function Message({ messageText, messageTime, messageId }) {
                 setReactionListVisibility('none');
             }, 300);
         });
+        window.addEventListener('wheel', () => {
+            setTimeout(() => {
+                setReactionListVisibility('none');
+            })
+        }, 100)
     });
 
     useEffect(() => {
