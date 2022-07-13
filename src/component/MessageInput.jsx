@@ -20,7 +20,7 @@ export default function MessageInput() {
     return (
         <React.Fragment>
             <div className="message-input-component-container">
-                <div className="message-record-wrapper flex flex-col items-end justify-end" 
+                <div className="message-record-wrapper flex flex-col items-end justify-end"
                 >
                     {messageRecord?.map((message, messageIndex) => {
                         return (

@@ -5,7 +5,8 @@ import MessageInput from './component/MessageInput';
 export default function App() {
   return (
     <div className="app w-[100vw] h-[100vh] flex flex-row items-center justify-center bg-zinc-800 cursor-default">
-      <div>
+      <div className='h-fit scroll-smooth w-auto max-h-[240px] overflow-scroll overflow-y-scroll overflow-x-hidden'
+      >
         <MessageInput />
       </div>
     </div>
