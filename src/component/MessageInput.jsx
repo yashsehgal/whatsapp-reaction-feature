@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { FaPaperclip, FaPaperPlane, FaSmile } from 'react-icons/fa';
-import { getReactionData } from "./assets";
+import { getProfilePicture, getReactionData } from "./assets";
 
 export default function MessageInput() {
     const [messageRecord, setMessageRecord] = useState([]);
@@ -90,6 +90,7 @@ export default function MessageInput() {
 function Message({ messageText, messageTime, messageId }) {
     const [reactionActionVisibilty, setReactionActionVisibility] = useState('0%');
     const [reactionListVisibility, setReactionListVisibility] = useState('none');
+    const [reactionRecordListWrapperVisibility, setReactionRecordListWrapperVisibility] = useState('none');
 
     const [reactionRecord, setReactionRecord] = useState([]);
     const [addedReactionsList, setAddedReactionsList] = useState([]);
@@ -97,7 +98,7 @@ function Message({ messageText, messageTime, messageId }) {
     const reactionsList = getReactionData();
 
     useEffect(() => {
-        let reactionListButton = document.getElementById(messageId);
+        let reactionListButton = document.querySelector(`#${messageId}`);
         reactionListButton.addEventListener('focusin', () => {
             setTimeout(() => {
                 setReactionListVisibility('flex');
@@ -115,10 +116,19 @@ function Message({ messageText, messageTime, messageId }) {
         }, 100)
     });
 
+    // useEffect(() => {
+    //     window.addEventListener('wheel', () => {
+    //         setTimeout(() => {
+    //             setReactionRecordListWrapperVisibility('none');
+    //         }, 100);
+    //     });
+    // });
+
     useEffect(() => {
         window.onkeyup = function (keyboardEvent) {
             if (keyboardEvent.keyCode === 27) {
                 setReactionListVisibility('none');
+                setReactionRecordListWrapperVisibility('none');
             }
         }
     });
@@ -138,15 +148,23 @@ function Message({ messageText, messageTime, messageId }) {
                                 onClick={() => {
                                     let _addedReactionsList = addedReactionsList;
                                     reactionRecord?.map((_reaction) => {
-                                        _addedReactionsList.push(_reaction.reactionName);
+                                        _addedReactionsList.push(_reaction?.reactionName);
                                         setAddedReactionsList(_addedReactionsList);
                                         return <React.Fragment></React.Fragment>
                                     });
                                     if (!addedReactionsList.includes(reaction?.name)) {
                                         let _newReactionRecord = reactionRecord;
-                                        _newReactionRecord.push({
+                                        _newReactionRecord?.push({
                                             emoji: getReactionData(reaction?.name),
-                                            username: 'You',
+                                            profile: {
+                                                username: 'You',
+                                                pictureURL: getProfilePicture(),
+                                                picture: <img 
+                                                            src={getProfilePicture()} 
+                                                            alt="profile"
+                                                            className="profile-picture rounded-full w-10 h-10"
+                                                        />
+                                            },
                                             reactionName: reaction?.name
                                         });
                                         setReactionRecord(_newReactionRecord);
@@ -171,6 +189,11 @@ function Message({ messageText, messageTime, messageId }) {
                         style={{
                             opacity: reactionActionVisibilty
                         }}
+                        onClick={() => {
+                            if (reactionRecordListWrapperVisibility.toLowerCase() === 'flex') {
+                                setReactionRecordListWrapperVisibility('none')
+                            }
+                        }}
                     >
                         <FaSmile />
                     </button>
@@ -182,9 +205,44 @@ function Message({ messageText, messageTime, messageId }) {
                     </div>
                 </div>
                 <div className="reaction-record-list-action-button-wrapper">
-                    <div className="reaction-record-list-overlay-wrapper"></div>
+                    <div className="reaction-record-list-overlay-wrapper flex-col items-start gap-1 h-fit w-[320px] pb-[20px] bg-zinc-900 shadow-2xl rounded-lg"
+                        style={{
+                            display: reactionRecordListWrapperVisibility
+                        }}
+                    >
+                        <div className="reaction-record-list-columns-wrapper px-4 py-3">
+                            <button className="all-reactions-tab-button bg-transparent text-white text-sm flex flex-row items-center justify-center gap-1
+                                hover:bg-white hover:bg-opacity-20 rounded-md px-3 py-1
+                            ">
+                                <span className="font-semibold">All</span> 
+                                <span className="font-normal text-zinc-400">{reactionRecord?.length}</span>
+                            </button>
+                        </div>
+                        {reactionRecord?.map((_reaction, _reactionIndex) => {
+                            return (
+                                <React.Fragment key={_reactionIndex}>
+                                    <div className="reaction-record-item-wrapper h-fit w-full bg-transparent hover:bg-white hover:bg-opacity-20
+                                        flex flex-row items-center justify-between px-4 py-2
+                                    ">
+                                        <div className="profile-name-picture-record-wrapper flex flex-row items-center justify-start gap-2">
+                                            <span className="profile-picture-wrapper">{_reaction?.profile?.picture}</span>
+                                            <span className="username-wrapper text-white font-semibold text-sm leading-snug">{_reaction?.profile?.username}</span>
+                                        </div>
+                                        <span className="reaction-emoji-wrapper">
+                                        <img src={_reaction?.emoji} alt="emoji-record" 
+                                            style={{ width: '20px', height: '20px' }}
+                                        />
+                                        </span>
+                                    </div>
+                                </React.Fragment>
+                            )
+                        })}
+                    </div>
                     {reactionRecord && reactionRecord.length > 0
-                        ? <button className="reaction-record-list-action-button px-[4px] py-[2px] bg-teal-600 rounded-full flex flex-row items-center justify-center gap-[1.5px] -mt-1 mb-1.5">
+                        ? <button className="reaction-record-list-action-button px-[4px] py-[2px] bg-teal-600 rounded-full flex flex-row items-center justify-center gap-[1.5px] -mt-1 mb-1.5"
+                            onClick={() => setReactionRecordListWrapperVisibility('flex')}
+                            id={`message-record-list-opener_${messageId}`}
+                        >
                             {reactionRecord?.map((reactionEmoji, reactionEmojiIndex) => {
                                 return (
                                     <img src={reactionEmoji?.emoji} alt="emoji-record" key={reactionEmojiIndex} 

@@ -7,12 +7,17 @@ input, button {
     z-index: 1;
 }
 
-.message-reactions-list-option-wrapper {
+.message-reactions-list-option-wrapper,
+.reaction-record-list-overlay-wrapper {
     cursor: default;
     z-index: 2;
     position: absolute;
     bottom: 48px;
     right: 0px;
+}
+
+.reaction-record-list-overlay-wrapper {
+    right: 40px;
 }
 
 /* scroll-bar styling */
