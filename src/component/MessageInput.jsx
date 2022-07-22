@@ -229,9 +229,9 @@ function Message({ messageText, messageTime, messageId }) {
                                             <span className="username-wrapper text-white font-semibold text-sm leading-snug">{_reaction?.profile?.username}</span>
                                         </div>
                                         <span className="reaction-emoji-wrapper">
-                                        <img src={_reaction?.emoji} alt="emoji-record" 
-                                            style={{ width: '20px', height: '20px' }}
-                                        />
+                                            <img src={_reaction?.emoji} alt="emoji-record" 
+                                                style={{ width: '20px', height: '20px' }}
+                                            />
                                         </span>
                                     </div>
                                 </React.Fragment>
