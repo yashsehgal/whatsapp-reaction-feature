@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { FaPaperclip, FaPaperPlane, FaSmile } from 'react-icons/fa';
-import { getProfilePicture, getReactionData } from "./assets";
+import { FaArrowLeft, FaPaperclip, FaPaperPlane, FaPlusCircle, FaSmile } from 'react-icons/fa';
+import { getMoreReactionsData, getProfilePicture, getReactionData } from "./assets";
 
 export default function MessageInput() {
     const [messageRecord, setMessageRecord] = useState([]);
@@ -95,7 +95,16 @@ function Message({ messageText, messageTime, messageId }) {
     const [reactionRecord, setReactionRecord] = useState([]);
     const [addedReactionsList, setAddedReactionsList] = useState([]);
 
+    const [moreReactionsListVisibility, setMoreReactionsListVisibility] = useState('none');
+    const [moreReactionsListRef, setMoreReactionsList] = useState([]);
+
     const reactionsList = getReactionData();
+
+    useEffect(() => {
+        getMoreReactionsData().then(res => {
+            setMoreReactionsList(res);
+        }).catch(err => console.log('emoji-api-error', err));
+    }, []);
 
     useEffect(() => {
         let reactionListButton = document.querySelector(`#${messageId}`);
@@ -116,13 +125,16 @@ function Message({ messageText, messageTime, messageId }) {
         }, 100)
     });
 
-    // useEffect(() => {
-    //     window.addEventListener('wheel', () => {
-    //         setTimeout(() => {
-    //             setReactionRecordListWrapperVisibility('none');
-    //         }, 100);
-    //     });
-    // });
+    useEffect(() => {
+        if (!document.getElementById(`message-record-list-opener_${messageId}`)) {
+            let reactionRecordListButton = document.getElementById(`message-record-list-opener_${messageId}`);
+            reactionRecordListButton?.addEventListener('focusout', () => {
+                setTimeout(() => {
+                    setReactionRecordListWrapperVisibility('none');
+                }, 300);
+            })
+        }
+    });
 
     useEffect(() => {
         window.onkeyup = function (keyboardEvent) {
@@ -136,6 +148,29 @@ function Message({ messageText, messageTime, messageId }) {
     return (
         <React.Fragment>
             <div className="message-component-wrapper h-fit flex flex-col items-end justify-end">
+                <div className="reaction-record-list-overlay-wrapper flex-col items-start gap-1 h-fit w-[320px] pb-[20px] bg-zinc-900 shadow-2xl rounded-lg"
+                    style={{
+                        display: moreReactionsListVisibility
+                    }}
+                >
+                    <div className="h-fit w-full flex flex-row items-center justify-start border-b border-gray-800 px-4 py-4">
+                        <FaArrowLeft className="text-white" />
+                    </div>
+                    <div className="h-fit w-full px-4 py-3">
+                        <span className="leading-snug text-gray-600 text-xs font-semibold">More Reactions</span>
+                    </div>
+                    <div className="more-emojis-reaction-list-wrapper grid grid-cols-6 items-center justify-between">
+                        {moreReactionsListRef?.map((moreReactionEmoji, moreReactionEmojiIndex) => {
+                            return (
+                                <button key={moreReactionEmojiIndex}
+                                    className="p-2 rounded-full bg-transparent hover:bg-white hover:bg-opacity-20"
+                                >
+                                    {moreReactionEmoji?.image}
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
                 <div className="message-reactions-list-option-wrapper w-[280px] h-fit flex flex-row items-center justify-center gap-1 bg-zinc-900 rounded-full px-3 py-1 shadow-lg transition-all"
                     style={{
                         display: reactionListVisibility
@@ -178,6 +213,14 @@ function Message({ messageText, messageTime, messageId }) {
                             </button>
                         )
                     })}
+                    <button className="p-2 text-white rounded-full bg-transparent hover:bg-white hover:bg-opacity-20"
+                        onClick={() => {
+                            setReactionListVisibility('none');
+                            setMoreReactionsListVisibility('flex');
+                        }}
+                    >
+                        <FaPlusCircle />
+                    </button>
                 </div>
                 <div className="message-block-reaction_action-wrapper flex flex-row items-center justify-end gap-2"
                     onMouseEnter={() => setReactionActionVisibility('60%')}

@@ -30,11 +30,30 @@ function getReactionData(name=null) {
     }
 }
 
+async function getMoreReactionsData() {
+    let emojisList = [];
+    const emojiAPIBaseURL = 'https://emoji-api.com/emojis';
+    const emojiAPIRequest = `${emojiAPIBaseURL}?access_key=734fd615ff3a64c986ea3b0729c68f442862221c`;
+    let apiResponse = await fetch(emojiAPIRequest, {
+        mode: 'cors',
+        credentials: 'include'
+    });
+    let apiResponseJSON = await apiResponse.json();
+    apiResponseJSON?.map((emoji) => {
+        emojisList.push({
+            title: emoji?.slug,
+            image: emoji?.character
+        })
+    });
+    return await emojisList;
+}
+
 function getProfilePicture() {
     return "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
 }
 
 export {
     getReactionData,
-    getProfilePicture
+    getProfilePicture,
+    getMoreReactionsData
 }
