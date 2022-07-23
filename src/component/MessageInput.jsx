@@ -148,7 +148,7 @@ function Message({ messageText, messageTime, messageId }) {
     return (
         <React.Fragment>
             <div className="message-component-wrapper h-fit flex flex-col items-end justify-end">
-                <div className="reaction-record-list-overlay-wrapper flex-col items-start gap-1 h-fit w-[320px] pb-[20px] bg-zinc-900 shadow-2xl rounded-lg"
+                <div className="reaction-record-list-overlay-wrapper flex-col items-start gap-1 max-h-[240px] h-fit w-[320px] pb-[20px] bg-zinc-900 shadow-2xl rounded-lg overflow-x-hidden overflow-y-scroll"
                     style={{
                         display: moreReactionsListVisibility
                     }}

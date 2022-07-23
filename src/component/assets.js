@@ -33,11 +33,8 @@ function getReactionData(name=null) {
 async function getMoreReactionsData() {
     let emojisList = [];
     const emojiAPIBaseURL = 'https://emoji-api.com/emojis';
-    const emojiAPIRequest = `${emojiAPIBaseURL}?access_key=734fd615ff3a64c986ea3b0729c68f442862221c`;
-    let apiResponse = await fetch(emojiAPIRequest, {
-        mode: 'cors',
-        credentials: 'include'
-    });
+    const emojiAPIRequest = `${emojiAPIBaseURL}?access_key=61908277211628e9df7fae3fe6be1a63838a0da1`;
+    let apiResponse = await fetch(emojiAPIRequest);
     let apiResponseJSON = await apiResponse.json();
     apiResponseJSON?.map((emoji) => {
         emojisList.push({
